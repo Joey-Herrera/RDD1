@@ -1,0 +1,70 @@
+---
+title: "RDD1"
+author: "Joey Herrera"
+date: "2/14/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, message=FALSE, output=FALSE}
+library(learnr)
+library(haven) #For data upload
+library(tidyverse)
+library(stargazer)
+library(estimatr)
+library(rdd)
+library(rdrobust)
+library(rddensity)
+library(ggplot2)
+
+#Load in DUI data
+Hansen <- read_dta("/Users/josephherrera/desktop/Causal Inference/hansen_dwi.dta")
+
+```
+
+Question 3: Create a dummy variable when BAC is greater than or equal to 0.08.
+```{r echo=FALSE}
+Hansen_dummy = Hansen %>%
+  mutate(bacdummy = ifelse(bac1 >= 0.08,1 ,0))
+
+head(Hansen_dummy)
+```
+
+Question 4: Look for evidence of manipulation
+```{r echo=FALSE}
+cli::cli_text("Search for Manipulation Evidence")
+ggplot(data = Hansen_dummy) +
+  geom_histogram(aes(bac1, color = factor(bacdummy)),alpha = 0.5) +
+  geom_vline(xintercept = 0.08, colour = "black", linetype = 1) +
+  geom_vline(xintercept = 0.15, color = "black", linetype = 1) +
+  labs(x = "BAC 1 (X)", y = "Frequency (Y)")
+```
+If people where capable of manipulating their blood alcohol levels, I would test for manipulation by looking for non-random heaping by looking at a histogram. I would also run a regression discontinuity with bac1 as the running variable and a y-variable of interest to see if there is a change in density along around the 0.08 and 0.15 thresholds. After recreating figure 1, I see no evidence of non-random heaping on the running variable. The data has a contiuous distribution of blood alcohol content levels. The evidence I found recreating Figure 1 from Hansen's paper agrees with his analysis testing for the same form of manipulation.
+
+Question 5: Check the Covariate Balance
+```{r echo=FALSE}
+Hansen_DUI = Hansen_dummy %>%
+  filter(bacdummy == "")
+Table2_PanelA = lm(bac1 ~ white + male + aged + acc, data = Hansen_dummy)
+
+Table2_PanelA
+```
+
+
+Question 6: Recreate Figure 2
+```{r echo=FALSE}
+cli::cli_text("Potential Outcomes after Treatment")
+ggplot(data = Hansen_dummy) +
+  geom_point(alpha = 0.5) +
+  geom_vline(xintercept = 0.08, colour = "black", linetype = 1) +
+  geom_vline(xintercept = 0.15, color = "black", linetype = 1) +
+  stat_smooth(method = "lm", se = F) + 
+  labs(x = "BAC1 (X)", y = "Potential Outcome (Y)")
+
+```
+isjf'a'phf
+
+```{r echo=FALSE}
+  geom_vline(xintercept = 0.08, colour = "black", linetype = 1) +
+  geom_vline(xintercept = 0.15, color = "black", linetype = 1)
+```
+
