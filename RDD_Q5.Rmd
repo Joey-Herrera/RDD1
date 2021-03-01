@@ -1,0 +1,131 @@
+---
+title: "RDD1"
+author: "Joey Herrera"
+date: "2/14/2021"
+output: pdf_document
+---
+#Regression Discontinuity Design Replication
+
+##Question 2: Summary of Hansen's RDD paper
+
+Hansen wrote this paper to add to the literature on recidivism by focusing on the recidivism rates and people driving under the influence. Hansen's research project attempts to answer the question, "What effects do harsher punishments and sanctions have on recidivism rates for people driving under the influence?" This study's data are blood alcohol content (BAC) test results from the state of Washington from 1999-2007. Choosing 1999-2007 as a time frame allows Hansen to define recidivism as a repeat offender charged with another DUI within a four-year window of their last DUI. Thus, the overarching time frame considered is 1995-2011. This dataset was cleaned to not include individuals under the drinking age since they would bias the recidivism rates and the results of this study.  Hansen used a regression discontinuity design to estimate the effects of harsher punishments on recidivism rates for people driving under the influence. Using BAC tests as the running variable, Hansen chose two different thresholds at 0.08 and 0.15. 0.08 represents the level of BAC that qualifies for the issuing of a DUI. 0.15 represents the BAC threshold where an individual can receive an aggravated DUI. These two thresholds separate the observations into three distinct sets where punishments increase as BAC increases and observations go from one group of observations to another. Observations are put into groups of first-time offenders, repeat offenders, and a set of all DUI offenders. From his empirical model, Hansen concludes that first-time DUI offenders with a BAC between 0.08 and 0.15 have a higher recidivism rate than that of any other group.
+
+```{r setup, include=FALSE, message=FALSE, output=FALSE}
+library(learnr)
+library(haven) #For data upload
+library(tidyverse)
+library(stargazer)
+library(estimatr)
+library(rdd)
+library(rdrobust)
+library(rddensity)
+library(ggplot2)
+library(jtools)
+
+#Load in DUI data
+Hansen <- read_dta("/Users/josephherrera/desktop/Causal Inference/hansen_dwi.dta")
+
+```
+
+Question 3: Create a dummy variable when BAC is greater than or equal to 0.08.
+```{r echo=FALSE}
+Hansen_dummy = Hansen %>%
+  mutate(bacdummy = ifelse(bac1 >= 0.08,1 ,0))
+
+head(Hansen_dummy)
+```
+
+Question 4: Look for evidence of manipulation
+```{r echo=FALSE}
+cli::cli_text("Search for Manipulation Evidence")
+ggplot(data = Hansen_dummy) +
+  geom_histogram(aes(bac1, color = factor(bacdummy)),alpha = 0.5) +
+  geom_vline(xintercept = 0.08, colour = "black", linetype = 1) +
+  geom_vline(xintercept = 0.15, color = "black", linetype = 1) +
+  labs(x = "BAC 1 (X)", y = "Frequency (Y)")
+```
+If people where capable of manipulating their blood alcohol levels, I would test for manipulation by looking for non-random heaping by looking at a histogram. I would also run a regression discontinuity with bac1 as the running variable and a y-variable of interest to see if there is a change in density along around the 0.08 and 0.15 thresholds. After recreating figure 1, I see no evidence of non-random heaping on the running variable. The data has a contiuous distribution of blood alcohol content levels. The evidence I found recreating Figure 1 from Hansen's paper agrees with his analysis testing for the same form of manipulation.
+
+Question 5: Check the Covariate Balance
+```{r}
+
+malecov <-RDestimate(male ~ bac1 | white + aged + acc + bacdummy + bacdummy*bac1 ,data = Hansen_dummy, cutpoint = 0.08, kernel="rectangular", bw = 0.05)
+
+agedcov <- RDestimate(aged ~ bac1 | white + male + acc + bacdummy + bacdummy*bac1 ,data = Hansen_dummy, cutpoint = 0.08, kernel="rectangular", bw = 0.05)
+
+whitecov <- RDestimate(white ~ bac1 | male + aged + acc + bacdummy + bacdummy*bac1 ,data = Hansen_dummy, cutpoint = 0.08, kernel="rectangular", bw = 0.05)
+
+acccov <- RDestimate( acc ~ bac1 | white + aged + male + bacdummy + bacdummy*bac1 ,data = Hansen_dummy, cutpoint = 0.08, kernel="rectangular", bw = 0.05)
+  
+data.frame(male = malecov$est[1], aged = agedcov$est[1], white = whitecov$est[1], acc = acccov$est[1])
+```
+
+The covariates are balanced. There is no sign of treatment effects assigned to individuals on personal characteristics. As a result, there is no bias that comes from unrandom assigned treatment grouping,
+
+Question 6: Recreate Figure 2 Panels A-D
+```{r echo=FALSE}
+Hansen_agg = Hansen_dummy %>%
+  mutate()
+
+cli::cli_text("Potential Outcomes after Treatment")
+ggplot(data = Hansen_dummy) +
+  geom_point(aes(x=bac1, y=acc), alpha = 0.5) +
+  geom_vline(xintercept = 0.08, colour = "black", linetype = 1) +
+  geom_vline(xintercept = 0.15, color = "black", linetype = 1) +
+  stat_smooth(aes(x=bac1, y=acc), method = "lm", se = T) + 
+  labs(x = "BAC1 (X)", y = "ACC (Y)")
+
+
+cli::cli_text("Potential Outcomes after Treatment")
+ggplot(data = Hansen_dummy) +
+  geom_point(aes(x=bac1, y=male), alpha = 0.5) +
+  geom_vline(xintercept = 0.08, colour = "black", linetype = 1) +
+  geom_vline(xintercept = 0.15, color = "black", linetype = 1) +
+  stat_smooth(aes(x=bac1, y=male), method = "lm", se = F) + 
+  labs(x = "Bac1 (X)", y = "Male (Y)")
+
+cli::cli_text("Potential Outcomes after Treatment")
+ggplot(data = Hansen_dummy) +
+  geom_point(aes(x=bac1, y=aged), alpha = 0.5, color="red") +
+  geom_vline(xintercept = 0.08, colour = "black", linetype = 1) +
+  geom_vline(xintercept = 0.15, color = "black", linetype = 1) +
+  stat_smooth(aes(x=bac1, y=aged), method = "lm", fill = "green", se = TRUE) + 
+  labs(x = "Age (X)", y = "Recidivism (Y)")
+
+install.packages("cobalt")
+library(cobalt)
+install.packages("MacthIt")
+library(MatchIt) #if not yet loaded
+
+data(Hansen_dummy, package = "cobalt")
+covs0 <- subset(Hansen_dummy, select = white)
+
+# Nearest neighbor 1:1 matching with replacemen
+m.out <- matchit(f.build("bacdummy", covs0), data = Hansen_dummy, method = "nearest", replace = TRUE)
+love.plot(bal.tab(m.out), threshold = .1)
+```
+
+Question 7: Replicate Table 3 Column 1 for Panels A and B
+```{r echo=FALSE}
+#Estimate equation 1 with recidivism as the outcome Panel A
+Column1A <- RDestimate(recidivism ~ bac1 | bacdummy ,data = Hansen_dummy, cutpoint = 0.08, kernel="rectangular", bw = c(0.03,0.13), se.type = "HC")
+Column1A
+
+Column2A <- RDestimate(recidivism ~ bac1 |  bacdummy + bacdummy*bac1 ,data = Hansen_dummy, cutpoint = 0.08, kernel="rectangular", bw = c(0.03,0.13), se.type = "HC")
+Column2A
+
+Column3A <- RDestimate(recidivism ~ bac1 | bacdummy + bacdummy*bac1 + (bacdummy)*(bac1^2) ,data = Hansen_dummy, cutpoint = 0.08, bw = c(0.03, 0.13), kernel="rectangular", se.type = "HC")
+Column3A
+
+#Estimate equation 1 with recidivism as the outcome Panel B
+Column1B <- RDestimate(recidivism ~ bac1 | bacdummy + bacdummy*bac1 ,data = Hansen_dummy, cutpoint = 0.08, kernel="rectangular", bw = c(0.055,0.105), se.type = "HC")
+Column1B
+
+Column2B <- RDestimate(recidivism ~ bac1 |  bacdummy + bacdummy*bac1 ,data = Hansen_dummy, cutpoint = 0.08, kernel="rectangular", bw = c(0.055,0.105), se.type = "HC")
+Column2B
+
+Column3B <- RDestimate(recidivism ~ bac1 | bacdummy + bacdummy*bac1 + (bacdummy)*(bac1^2) ,data = Hansen_dummy, cutpoint = 0.08, bw = c(0.055, 0.105), kernel="rectangular", se.type = "HC")
+Column3B
+```
+
+Question 8: 
