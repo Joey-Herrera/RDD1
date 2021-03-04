@@ -20,6 +20,8 @@ cmogram white bac1, cut(0.08) scatter line(0.08) qfitci
 cmogram aged bac1, cut(0.08) scatter line(0.08) qfitci
 cmogram acc bac1, cut(0.08) scatter line(0.08) qfitci
 
+graph combine Figure2PanelA Figure2PanelB Figure2PanelC Figure2PanelD
+
 rdplot male bac1, c(0.08) p(2)
 rdplot white bac1, c(0.08) p(2)
 rdplot aged bac1, c(0.08) p(2)
