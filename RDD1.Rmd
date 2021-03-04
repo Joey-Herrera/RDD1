@@ -50,16 +50,8 @@ Table2_PanelA
 ```
 
 
-Question 6: Recreate Figure 2
-```{r echo=FALSE}
-cli::cli_text("Potential Outcomes after Treatment")
-ggplot(data = Hansen_dummy) +
-  geom_point(alpha = 0.5) +
-  geom_vline(xintercept = 0.08, colour = "black", linetype = 1) +
-  geom_vline(xintercept = 0.15, color = "black", linetype = 1) +
-  stat_smooth(method = "lm", se = F) + 
-  labs(x = "BAC1 (X)", y = "Potential Outcome (Y)")
 
-```
+
+
 
 
