@@ -19,7 +19,6 @@ https://github.com/Joey-Herrera/RDD1
 Hansen wrote this paper to add to the literature on recidivism by focusing on the recidivism rates and people driving under the influence. Hansen's research project attempts to answer the question, "What effects do harsher punishments and sanctions have on recidivism rates for people driving under the influence?" This study's data are blood alcohol content (BAC) test results from the state of Washington from 1999-2007. Choosing 1999-2007 as a time frame allows Hansen to define recidivism as a repeat offender charged with another DUI within a four-year window of their last DUI. Thus, the overarching time frame considered is 1995-2011. This dataset was cleaned to not include individuals under the drinking age since they would bias the recidivism rates and the results of this study.  Hansen used a regression discontinuity design to estimate the effects of harsher punishments on recidivism rates for people driving under the influence. Using BAC tests as the running variable, Hansen chose two different thresholds at 0.08 and 0.15. 0.08 represents the level of BAC that qualifies for the issuing of a DUI. 0.15 represents the BAC threshold where an individual can receive an aggravated DUI. These two thresholds separate the observations into three distinct sets where punishments increase as BAC increases and observations go from one group of observations to another. Observations are put into groups of first-time offenders, repeat offenders, and a set of all DUI offenders. From his empirical model, Hansen concludes that first-time DUI offenders with a BAC between 0.08 and 0.15 have a higher recidivism rate than that of any other group.
 
 ```{r setup, include=TRUE, message=FALSE, output=FALSE}
-library(learnr)
 library(haven) #For data upload
 library(tidyverse)
 library(stargazer)
@@ -58,7 +57,11 @@ ggplot(data = Hansen_dummy) +
 If people where capable of manipulating their blood alcohol levels, I would test for manipulation by looking for non-random heaping by looking at a histogram. I would also run a regression discontinuity with bac1 as the running variable and a y-variable of interest to see if there is a change in density along around the 0.08 and 0.15 thresholds. After recreating figure 1, I see no evidence of non-random heaping on the running variable. The data has a contiuous distribution of blood alcohol content levels. The evidence I found recreating Figure 1 from Hansen's paper agrees with his analysis testing for the same form of manipulation.
 
 ###Question 5: Check the Covariate Balance
+<<<<<<< HEAD
 ```{r echo=TRUE}
+=======
+```{r echo=TRUE, eval=FALSE}
+>>>>>>> 9f13c3dc0c50d24d61f7eb3074e4cd2aed9b489e
 
 malecov <-RDestimate(male ~ bac1 | white + aged + acc + dui + dui*bac1 ,data = Hansen_dummy, cutpoint = 0.08, kernel="rectangular", bw = 0.05)
 
@@ -156,7 +159,7 @@ Table3
 
 
 Question 8: Replicate Figure 3 Panel A with a linear and quadratic fits
-```{r eval=FALSE warning=FALSE}
+```{r eval=FALSE, warning=FALSE}
 cmogram recidivism bac1, cut(0.08) scatter line(0.08) qfitci
 cmogram recidivism bac1, cut(0.08) scatter line(0.08) lfitci
 
@@ -166,7 +169,11 @@ rdplot recidivism bac1 if bac1<0.15, c(0.08) p(1)
 
 ![Figure 3 Panel A Linear](~/Documents/GitHub/RDD1/RDD1/Figures/F3PALLL.png)
 
+<<<<<<< HEAD
 ![Figure 2 Panel A Quadratic](~/Documents/GitHub/RDD1/RDD1/Figures/F3PAQ.png)
+=======
+![Figure 3 Panel A Quadratic](~/Documents/GitHub/RDD1/RDD1/Figures/F3PAQ.png)
+>>>>>>> 9f13c3dc0c50d24d61f7eb3074e4cd2aed9b489e
 
 Question 9: What I Learned
 Replicating Hansen's paper allowed me to familiarize myself with regression discontinuity commands in STATA and R. This empirical replication taught me the value of having an organized empirical workflow because it compartmentalizes different portions of the project and allows for greater reproducibility. Through this project I also learned how to connect my GitHub account with RStudio and use version control in RStudio, which has proved to be very useful. Throughout this replication I have been testing the hypothesis that harsher punishments and sanctions have negative effects on recidivism rates for people driving under the influence. I found that individuals with at least one prior dui are less likely to reoffend. As a result, I am confident in Hansen's original findings which are similar to my own. This makes sense because being charged with multiple dui citations increases the punishments. Thus, the increased punishment has a negative effect on an individual reoffending.
