@@ -47,22 +47,22 @@ gen lininteract = bac1*dui
 gen quadinteract = (bac1)^2*dui
 
 *Column 1 Panel A
-rdrobust recidivism bac1, c(0.08) covs(male white acc lininteract aged dui) h(0.05) kernel("uniform")
+rdrobust recidivism bac1, c(0.08) covs(male white acc aged dui) h(0.05) kernel("uniform")
 
 *Column 1 Panel B
-rdrobust recidivism bac1, c(0.08) covs(male white acc lininteract aged dui) h(0.025) kernel("uniform")
+rdrobust recidivism bac1, c(0.08) covs(male white acc aged dui) h(0.025) kernel("uniform")
 
 *Column 2 Panel A
-rdrobust recidivism bac1 lininteract, c(0.08) covs(male white acc lininteract aged dui) h(0.05) kernel("uniform")
+rdrobust recidivism bac1 lininteract, c(0.08) covs(male white acc aged dui) h(0.05) kernel("uniform")
 
 *Column 2 Panel B
-rdrobust recidivism bac1 lininteract, c(0.08) covs(male white acc lininteract aged dui) h(0.025) kernel("uniform")
+rdrobust recidivism bac1 lininteract, c(0.08) covs(male white acc aged dui) h(0.025) kernel("uniform")
 
 *Column 3 Panel A
-rdrobust recidivism bac1 lininteract quadinteract, c(0.08) covs(male white acc lininteract aged dui) h(0.05) kernel("uniform")
+rdrobust recidivism bac1 lininteract quadinteract, c(0.08) covs(male white acc aged dui) h(0.05) kernel("uniform")
 
 *Column 3 Panel B
-rdrobust recidivism bac1 lininteract quadinteract, c(0.08) covs(male white acc lininteract aged dui) h(0.025) kernel("uniform")
+rdrobust recidivism bac1 lininteract quadinteract, c(0.08) covs(male white acc aged dui) h(0.025) kernel("uniform")
 
 *Question 8 - Replicate Figure 3 Panel A with linear and quadratic fits
 cmogram recidivism bac1, cut(0.08) scatter line(0.08) qfitci
@@ -70,3 +70,7 @@ cmogram recidivism bac1, cut(0.08) scatter line(0.08) lfitci
 
 rdplot recidivism bac1 if bac1<0.15, c(0.08) p(2)
 rdplot recidivism bac1 if bac1<0.15, c(0.08) p(1)
+
+graph combine F3PL F3PLL
+graph combine F3PQ F3PQQ
+
