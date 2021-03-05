@@ -23,6 +23,8 @@ library(rdrobust)
 library(rddensity)
 library(ggplot2)
 library(jtools)
+library(knitr)
+library(kableExtra)
 
 #Load in DUI data
 Hansen <- read_dta("/Users/josephherrera/desktop/Causal Inference/hansen_dwi.dta")
@@ -39,7 +41,7 @@ head(Hansen_dummy)
 The coode above creates a dummy variable using 0.08 as the cutoff threshold. When the first blood alcohol test is greater than or equal to 0.08, then the individual is considered to be driving under the influence (dui). For these observations the dummy variable takes on the value of 1. If not, the driver will not recieve a dui. Thus, the dummyvariable for that observation takes on the value 0.
 
 Question 4: Look for evidence of manipulation
-```{r echo=TRUE, warning=TRUE}
+```{r echo=TRUE, warning=FALSE}
 cli::cli_text("Search for Manipulation Evidence")
 ggplot(data = Hansen_dummy) +
   geom_histogram(aes(bac1, color = factor(dui)),alpha = 0.5, bins = 50) +
@@ -60,10 +62,23 @@ whitecov <- RDestimate(white ~ bac1 | male + aged + acc + dui + dui*bac1 ,data =
 
 acccov <- RDestimate( acc ~ bac1 | white + aged + male + dui + dui*bac1 ,data = Hansen_dummy, cutpoint = 0.08, kernel="rectangular", bw = 0.05)
   
-data.frame(male = malecov$est[1], aged = agedcov$est[1], white = whitecov$est[1], acc = acccov$est[1])
+CovBal = data.frame(
+  Estimates = c("Coeff", "SE", "Z", "P-value", "Confidence Interval"),
+  m = c(malecov$est[1], malecov$se[1], malecov$z[1], malecov$p[1], malecov$ci[1]),
+  w = c(whitecov$est[1], whitecov$se[1], whitecov$z[1], malecov$p[1], malecov$ci[1]),
+  ag = c(agedcov$est[1], agedcov$se[1], malecov$z[1], malecov$p[1], malecov$ci[1]),
+  scc = c(acccov$est[1], acccov$se[1], acccov$z[1], malecov$p[1], malecov$ci[1])
+)
+
+CovBal %>%
+  kable(colnames = c("Characteristic", "Male", "White", "Age", "Accident"),
+        digits = 3,
+        caption = "Covariate Balance Panel A"
+  ) %>%
+  kable_classic(full_width = F, html_font = "Cambria")
 ```
 
-The covariates are balanced. There is no sign of treatment effects assigned to individuals on personal characteristics. As a result, there is no bias that comes from unrandom assigned treatment grouping,
+The covariates are balanced. There is no sign of treatment effects assigned to individuals on personal characteristics. As a result, Also,there is no bias that comes from unrandom assigned treatment grouping,
 
 Question 6: Recreate Figure 2 Panels A-D
 ```{r echo=TRUE, eval=FALSE}
