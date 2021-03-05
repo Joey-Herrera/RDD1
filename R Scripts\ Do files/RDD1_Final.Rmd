@@ -134,6 +134,21 @@ Column3B <- RDestimate(recidivism ~ bac1 | dui + dui*bac1 + (dui)*(bac1^2) ,data
 Column3B
 ```
 
+```{r echo=TRUE}
+#Format table using output from STATA codes
+
+all_tested_drivers = c(-0.24, -.020)
+no_prior_tests = c(-0.24, -.021)
+at_least_one_prior_test = c(-0.50, -.020)
+
+Table3 <- tibble(all_tested_drivers, no_prior_tests, at_least_one_prior_test)
+
+Table3
+```
+
+
+
+
 Question 8: Replicate Figure 3 Panel A with a linear and quadratic fits
 ```{r eval=FALSE warning=FALSE}
 cmogram recidivism bac1, cut(0.08) scatter line(0.08) qfitci
