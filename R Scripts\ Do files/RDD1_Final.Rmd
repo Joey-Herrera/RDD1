@@ -46,7 +46,7 @@ head(Hansen_dummy)
 The coode above creates a dummy variable using 0.08 as the cutoff threshold. When the first blood alcohol test is greater than or equal to 0.08, then the individual is considered to be driving under the influence (dui). For these observations the dummy variable takes on the value of 1. If not, the driver will not recieve a dui. Thus, the dummyvariable for that observation takes on the value 0.
 
 ###Question 4: Look for evidence of manipulation
-```{r echo=TRUE, warning=FALSE}
+```{r echo=FALSE, warning=FALSE}
 cli::cli_text("Search for Manipulation Evidence")
 ggplot(data = Hansen_dummy) +
   geom_histogram(aes(bac1, color = factor(dui)),alpha = 0.5, bins = 50) +
