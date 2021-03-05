@@ -57,7 +57,11 @@ ggplot(data = Hansen_dummy) +
 If people where capable of manipulating their blood alcohol levels, I would test for manipulation by looking for non-random heaping by looking at a histogram. I would also run a regression discontinuity with bac1 as the running variable and a y-variable of interest to see if there is a change in density along around the 0.08 and 0.15 thresholds. After recreating figure 1, I see no evidence of non-random heaping on the running variable. The data has a contiuous distribution of blood alcohol content levels. The evidence I found recreating Figure 1 from Hansen's paper agrees with his analysis testing for the same form of manipulation.
 
 ###Question 5: Check the Covariate Balance
+<<<<<<< HEAD
+```{r echo=TRUE}
+=======
 ```{r echo=TRUE, eval=FALSE}
+>>>>>>> 9f13c3dc0c50d24d61f7eb3074e4cd2aed9b489e
 
 malecov <-RDestimate(male ~ bac1 | white + aged + acc + dui + dui*bac1 ,data = Hansen_dummy, cutpoint = 0.08, kernel="rectangular", bw = 0.05)
 
@@ -165,7 +169,11 @@ rdplot recidivism bac1 if bac1<0.15, c(0.08) p(1)
 
 ![Figure 3 Panel A Linear](~/Documents/GitHub/RDD1/RDD1/Figures/F3PALLL.png)
 
+<<<<<<< HEAD
+![Figure 2 Panel A Quadratic](~/Documents/GitHub/RDD1/RDD1/Figures/F3PAQ.png)
+=======
 ![Figure 3 Panel A Quadratic](~/Documents/GitHub/RDD1/RDD1/Figures/F3PAQ.png)
+>>>>>>> 9f13c3dc0c50d24d61f7eb3074e4cd2aed9b489e
 
 Question 9: What I Learned
 Replicating Hansen's paper allowed me to familiarize myself with regression discontinuity commands in STATA and R. This empirical replication taught me the value of having an organized empirical workflow because it compartmentalizes different portions of the project and allows for greater reproducibility. Through this project I also learned how to connect my GitHub account with RStudio and use version control in RStudio, which has proved to be very useful. Throughout this replication I have been testing the hypothesis that harsher punishments and sanctions have negative effects on recidivism rates for people driving under the influence. I found that individuals with at least one prior dui are less likely to reoffend. As a result, I am confident in Hansen's original findings which are similar to my own. This makes sense because being charged with multiple dui citations increases the punishments. Thus, the increased punishment has a negative effect on an individual reoffending.
