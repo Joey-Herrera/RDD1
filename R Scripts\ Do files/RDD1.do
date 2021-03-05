@@ -59,10 +59,10 @@ rdrobust recidivism bac1 lininteract, c(0.08) covs(male white acc aged dui) h(0.
 rdrobust recidivism bac1 lininteract, c(0.08) covs(male white acc aged dui) h(0.025) kernel("uniform")
 
 *Column 3 Panel A
-rdrobust recidivism bac1 lininteract quadinteract, c(0.08) covs(male white acc aged dui) h(0.05) kernel("uniform")
+rdrobust recidivism bac1 lininteract quadinteract, c(0.08) covs(male white acc aged lininteract dui) h(0.05) kernel("uniform")
 
 *Column 3 Panel B
-rdrobust recidivism bac1 lininteract quadinteract, c(0.08) covs(male white acc aged dui) h(0.025) kernel("uniform")
+rdrobust recidivism bac1 lininteract quadinteract, c(0.08) covs(male white acc aged lininteract dui) h(0.025) kernel("uniform")
 
 *Question 8 - Replicate Figure 3 Panel A with linear and quadratic fits
 cmogram recidivism bac1, cut(0.08) scatter line(0.08) qfitci
