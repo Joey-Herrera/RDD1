@@ -2,7 +2,10 @@
 title: "RDD1"
 author: "Joey Herrera"
 date: "2/14/2021"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
 ---
 #Regression Discontinuity Design Replication
 
